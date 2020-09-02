@@ -1,12 +1,13 @@
 class NeuralNetwork():
 
-	def __init__(self, X, Y, layers_dims, learning_rate, num_iterations, print_cost):
+	def __init__(self, X, Y, layers_dims, learning_rate, num_iterations, print_cost, initialization):
 		self.X = X
 		self.Y = Y
 		self.layers_dims = layers_dims
 		self.learning_rate = learning_rate
 		self.num_iterations = num_iterations
 		self.print_cost = print_cost
+		self.initialization = initialization
 
 	def summary(self):
 		print('Train Data shape:', self.X.shape)
@@ -20,7 +21,7 @@ class NeuralNetwork():
 
 	def fit(self):
 		self.costs = []
-		self.params = initialize_parameters(self.layers_dims)
+		self.params = initialize_parameters(self.layers_dims, self.initialization)
 		for i in range(0, self.num_iterations):
 			# Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
 			self.AL, self.caches = forward_propagation(self.X, self.params)
@@ -139,10 +140,13 @@ def sigmoid_backward(dA, cache):
 	return dZ
 
 
-def initialize_parameters(layer_dims):
+def initialize_parameters(layer_dims, initialization):
 	"""
+	Weights initialization
 	Arguments:
 	layer_dims -- python array (list) containing the dimensions of each layer in our network
+	initialization -- Gaussian variance (see notes): 
+	             random, he (He et. al), xavier (Xavier et. al), ybengio (Yoshua Bengio et al)
 
 	Returns:
 	parameters -- python dictionary containing your parameters "W1", "b1", ..., "WL", "bL":
@@ -152,11 +156,36 @@ def initialize_parameters(layer_dims):
 	parameters = {}
 	L = len(layer_dims)            # number of layers in the network
 
-	for l in range(1, L): 
-		parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1])
-		parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
-		assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
-		assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+	if initialization == 'he':
+		for l in range(1, L): 
+			parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * np.sqrt(2/layers_dims[l-1])
+			parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+			assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+			assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+	elif initialization == 'xavier':
+		for l in range(1, L): 
+			parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * np.sqrt(1/layers_dims[l-1])
+			parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+			assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+			assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+	elif initialization == 'ybengio':
+		for l in range(1, L): 
+			parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * np.sqrt(2/(layers_dims[l-1]+layers_dims[l]))
+			parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+			assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+			assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+	elif initialization == 'random':
+		for l in range(1, L): 
+			parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
+			parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+			assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+			assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+	elif initialization == 'zeros':
+		for l in range(1, L): 
+			parameters['W' + str(l)] = np.zeros((layer_dims[l], layer_dims[l-1]))
+			parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+			assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+			assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
 
 	return parameters
 
@@ -215,7 +244,7 @@ def forward_propagation(X, parameters):
 	
 	Arguments:
 	X -- data, numpy array of shape (input size, number of examples)
-	parameters -- output of initialize_parameters_deep()
+	parameters -- output of initialize_parameters()
 	
 	Returns:
 	AL -- last post-activation value
@@ -397,10 +426,10 @@ if __name__ == '__main__':
 
 	# HYPERPARAMETERS
 	layers_dims = [train_x.shape[0], 20, 7, 5, 1]
-	num_iterations = 2500
+	num_iterations = 3000
 	learning_rate = 0.0075
 	print_cost = True	
-	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost)
+	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost, initialization='xavier')
 	nn.fit()
 	nn.summary()
 	

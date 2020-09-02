@@ -1,10 +1,12 @@
 class NeuralNetwork():
 
-	def __init__(self, X, Y, layers_dims, learning_rate, num_iterations=0, print_cost=0, params=0):
+	def __init__(self, X, Y, layers_dims, learning_rate, num_iterations, print_cost, params={}):
 		self.X = X
 		self.Y = Y
 		self.layers_dims = layers_dims
+		self.learning_rate = learning_rate
 		self.num_iterations = num_iterations
+		self.print_cost = print_cost
 		self.params = params
 
 	def get_params(self):
@@ -13,11 +15,16 @@ class NeuralNetwork():
 	def get_layers(self):
 		return self.layers_dims
 
-	def set_var(self, arg):
-		self.params = arg
-		pass
+	def summary(self):
+		print('Train Data shape:', self.X.shape)
+		print('Test Data shape:', self.Y.shape)
+		print('NN Architecture:', self.layers_dims)
+		print('Learning Rate', self.learning_rate)
+		print('Number of Iterations:', self.num_iterations)
+		print('Is it printing cost values?', str(self.print_cost))
+		print('Paramters:', self.params)
 
-	def initialize_parameters(self, layer_dims):
+	def initialize_parameters(self):
 		"""
 		Arguments:
 		layer_dims -- python array (list) containing the dimensions of each layer in our network
@@ -27,14 +34,14 @@ class NeuralNetwork():
 		                Wl -- weight matrix of shape (layer_dims[l], layer_dims[l-1])
 		                bl -- bias vector of shape (layer_dims[l], 1)
 		"""
-		parameters = {}
-		L = len(layer_dims)            # number of layers in the network
+		parameters = self.params
+		L = len(self.layers_dims)            # number of layers in the network
 
 		for l in range(1, L): 
-		    parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1])
-		    parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
-		    assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
-		    assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+		    parameters['W' + str(l)] = np.random.randn(self.layers_dims[l], self.layers_dims[l-1]) / np.sqrt(self.layers_dims[l-1])
+		    parameters['b' + str(l)] = np.zeros((self.layers_dims[l],1))
+		    assert(parameters['W' + str(l)].shape == (self.layers_dims[l], self.layers_dims[l-1]))
+		    assert(parameters['b' + str(l)].shape == (self.layers_dims[l], 1))
 
 		return parameters
 
@@ -76,7 +83,9 @@ if __name__ == '__main__':
 	layers_dims = [3, 4, 5, 2, 1]
 	num_iterations = 2500
 	learning_rate = 0.0075
-	print_cost = True
-	params = 1000	
-	nn = NeuralNetwork(params, layers_dims)
+	print_cost = True	
+	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost)
+	nn.summary()
+	nn.initialize_parameters()
+	nn.summary()
 	

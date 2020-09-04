@@ -8,6 +8,8 @@ class NeuralNetwork():
 		self.num_iterations = num_iterations
 		self.print_cost = print_cost
 		self.initialization = initialization
+		self.params = {}
+
 
 	def summary(self):
 		print('Train Data shape:', self.X.shape)
@@ -406,6 +408,32 @@ def update_parameters(parameters, grads, learning_rate):
 
 	return parameters
 
+def predict(X, y, parameters):
+    """
+    This function is used to predict the results of a  L-layer neural network.
+    
+    Arguments:
+    X -- data set of examples you would like to label
+    parameters -- parameters of the trained model
+    
+    Returns:
+    p -- predictions for the given dataset X
+    """
+    m = X.shape[1]
+    n = len(parameters) // 2 # number of layers in the neural network
+    p = np.zeros((1,m))
+    # Forward propagation
+    probas, caches = forward_propagation(X, parameters)
+    # convert probas to 0/1 predictions
+    for i in range(0, probas.shape[1]):
+        if probas[0,i] > 0.5:
+            p[0,i] = 1
+        else:
+            p[0,i] = 0
+    print("Accuracy: "  + str(np.sum((p == y)/m)))
+        
+    return p
+
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
@@ -429,7 +457,9 @@ if __name__ == '__main__':
 	num_iterations = 3000
 	learning_rate = 0.0075
 	print_cost = True	
-	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost, initialization='xavier')
-	nn.fit()
+	initialization = 'zeros'
+	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost, initialization)
+	nn_params = nn.fit()
 	nn.summary()
+	predictions = predict(test_x, test_y, nn_params)
 	

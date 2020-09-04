@@ -10,7 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 fashion_mnist = tf.keras.datasets.fashion_mnist
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
-print(train_images.shape)
+print(train_images[0].shape)
 
 # plt.imshow(train_images[9])
 # plt.show()
@@ -26,6 +26,7 @@ model = tf.keras.Sequential([
 
 model.compile(optimizer=tf.optimizers.Adam(), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(train_images, train_labels, epochs=5)
-
+print('\n'+'% '*20 + 'TRAINING PHASE' + ' %'*20)
+model.fit(train_images, train_labels, epochs=15)
+print('\n'+'% '*20 + 'EVALUATE PHASE' + ' %'*20)
 print(model.evaluate(test_images, test_labels))

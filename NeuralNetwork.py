@@ -456,7 +456,7 @@ if __name__ == '__main__':
 	layers_dims = [train_x.shape[0], 20, 7, 5, 1]
 	num_iterations = 3000
 	learning_rate = 0.0075
-	print_cost = True	
+	print_cost = True
 	initialization = 'zeros'
 	nn = NeuralNetwork(train_x, train_y, layers_dims, learning_rate, num_iterations, print_cost, initialization)
 	nn_params = nn.fit()

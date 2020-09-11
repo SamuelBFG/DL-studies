@@ -1,1 +1,4 @@
+TRAIN:
 https://storage.googleapis.com/laurencemoroney-blog.appspot.com/horse-or-human.zip
+DEV:
+https://storage.googleapis.com/laurencemoroney-blog.appspot.com/validation-horse-or-human.zip

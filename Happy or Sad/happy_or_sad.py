@@ -117,7 +117,7 @@ def train_happy_sad_model():
         verbose=2,
     callbacks=[callbacks])
 
-    return history.history['acc'][-1]
+    return history.history['accuracy'][-1]
 
 if __name__ == '__main__':
     train_happy_sad_model()

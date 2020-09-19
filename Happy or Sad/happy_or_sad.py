@@ -98,6 +98,8 @@ def train_happy_sad_model():
 
     
     ################## DataGenerator ###################
+
+    ################## DataGenerator ###################
     
     train_datagen = ImageDataGenerator(rescale=1./255)
 
